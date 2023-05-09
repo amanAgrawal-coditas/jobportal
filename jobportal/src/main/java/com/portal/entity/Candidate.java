@@ -1,6 +1,5 @@
 package com.portal.entity;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +7,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -26,11 +24,11 @@ public class Candidate
     private long phoneNumber;
     @OneToMany(mappedBy = "candidate")
     private List<AppliedApplication> applicationList;
-    @OneToOne(mappedBy = "candidate")
+    @OneToOne
     private Roles roles;
     @OneToMany(mappedBy = "candidate")
     private List<CandidateCategories> candidateCategoriesList;
-    @OneToOne
+    @OneToOne(cascade=CascadeType.ALL)
     private ProfileImage profileImage;
 
 }

@@ -18,9 +18,9 @@ public class Roles
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long roleId;
     private String name;
-    @OneToOne
+    @OneToOne(mappedBy = "roles")
     private Candidate candidate;
-    @OneToOne
+    @OneToOne(mappedBy = "role")
     private Company company;
 
 }

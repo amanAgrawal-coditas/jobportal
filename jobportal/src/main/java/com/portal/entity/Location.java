@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,4 +22,8 @@ public class Location
     private Company company;
     @ManyToOne
     private Jobs jobs;
+    private String locationName;
+    public Location(String locationName) {
+        this.locationName = locationName;
+    }
 }

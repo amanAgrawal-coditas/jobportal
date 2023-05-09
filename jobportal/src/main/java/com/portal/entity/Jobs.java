@@ -28,7 +28,7 @@ public class Jobs
     @OneToMany(mappedBy = "jobs")
     private List<AppliedApplication> applicationList;
     @ManyToOne
-    private CompanyCategory companyCategory;
+    private Category category;
 
 
 }

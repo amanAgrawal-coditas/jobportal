@@ -6,9 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Blob;
 import java.util.List;
-import java.util.Set;
+
 
 @Entity
 @Getter
@@ -23,14 +22,14 @@ public class Company{
     private String email;
     private String password;
     private String description;
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company",cascade=CascadeType.ALL)
     private List<Location> locations;
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company", cascade =  CascadeType.ALL)
     private List<Jobs> jobsList;
-    @OneToOne(mappedBy = "company")
-    private Roles role;
     @OneToOne
+    private Roles role;
+    @OneToOne(cascade=CascadeType.ALL)
     private ProfileImage profileImage;
-    @OneToMany(mappedBy = "company")
-    private List<CompanyCategory> companyCategoryList;
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    private List<Category> categoryList;
 }

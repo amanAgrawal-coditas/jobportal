@@ -1,7 +1,9 @@
 package com.portal.dto;
 
-import com.portal.entity.Location;
+
+import com.portal.entity.AppliedApplication;
 import com.portal.entity.ProfileImage;
+import com.portal.entity.Roles;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +22,7 @@ public class CandidateSignupDto
     private String password;
     private long phoneNumber;
     private ProfileImage image;
-    private List<Location> locationList;
+    private Roles roles;
+    private List<Long> applicationList;
 
 }

@@ -22,7 +22,8 @@ public class Category
     private String categoryName;
     @OneToMany(mappedBy = "category")
     private List<CandidateCategories> candidateCategoriesList;
-    @OneToMany(mappedBy = "category")
-    private List<CompanyCategory> companyCategoryList;
-
+    @OneToMany(mappedBy ="category")
+    private List<Jobs> jobsList;
+    @ManyToOne(cascade=CascadeType.PERSIST)
+    private Company company;
 }
