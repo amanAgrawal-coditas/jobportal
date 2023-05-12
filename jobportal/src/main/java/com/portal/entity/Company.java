@@ -31,7 +31,7 @@ public class Company implements UserDetails {
     private List<Location> locations;
     @OneToMany(mappedBy = "company", cascade =  CascadeType.ALL)
     private List<Jobs> jobsList;
-    @OneToOne
+    @ManyToOne
     private Roles role;
     @OneToOne(cascade=CascadeType.ALL)
     private ProfileImage profileImage;

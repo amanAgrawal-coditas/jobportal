@@ -1,5 +1,7 @@
 package com.portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +23,7 @@ public class CandidateCategories
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long domainId;
     @ManyToOne
+    @JsonIgnore
     private Candidate candidate;
     @ManyToOne
     private Category category;

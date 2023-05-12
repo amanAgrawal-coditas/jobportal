@@ -1,11 +1,13 @@
 package com.portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,9 +20,9 @@ public class Roles
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long roleId;
     private String name;
-    @OneToOne(mappedBy = "roles")
-    private Candidate candidate;
-    @OneToOne(mappedBy = "role")
-    private Company company;
+    @OneToMany(mappedBy = "roles")
+    private List<Candidate> candidate;
+    @OneToMany(mappedBy = "role")
+    private List<Company> company;
 
 }

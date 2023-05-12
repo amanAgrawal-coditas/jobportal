@@ -1,7 +1,7 @@
 package com.portal.service.implementation;
 
-import com.portal.dto.CandidateSignupDto;
-import com.portal.dto.CompanySignupDto;
+import com.portal.dto.CandidateDto;
+import com.portal.dto.CompanyDto;
 import com.portal.dto.LoginDto;
 import com.portal.entity.*;
 import com.portal.exception.CandidateAlreadyExistsException;
@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 public class AuthServiceImplementation implements AuthService
@@ -37,15 +37,13 @@ public class AuthServiceImplementation implements AuthService
     private CategoryRepository categoryRepository;
 
 
-
-
     @Override
     public String login(LoginDto loginDto) {
         return "logged in successfully";
     }
 
     @Override
-    public String companySignUp(CompanySignupDto companySignupDto) throws CompanyAlreadyExistsException
+    public String companySignUp(CompanyDto companySignupDto) throws CompanyAlreadyExistsException
     {
         if (companyRepository.existsByEmail(companySignupDto.getEmail()))
         {
@@ -79,7 +77,7 @@ public class AuthServiceImplementation implements AuthService
     }
 
     @Override
-    public String candidateSignUp(CandidateSignupDto candidateSignupDto) throws CandidateAlreadyExistsException {
+    public String candidateSignUp(CandidateDto candidateSignupDto) throws CandidateAlreadyExistsException {
         if (candidateRepository.existsByEmail(candidateSignupDto.getEmail()))
         {
             throw new CandidateAlreadyExistsException(HttpStatus.BAD_REQUEST,"Candidate's email already exists");

@@ -1,5 +1,7 @@
 package com.portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,11 +31,12 @@ public class Candidate implements UserDetails
     private long phoneNumber;
     @OneToMany(mappedBy = "candidate")
     private List<AppliedApplication> applicationList;
-    @OneToOne
+    @ManyToOne
+    @JsonIgnore
     private Roles roles;
     @OneToMany(mappedBy = "candidate")
     private List<CandidateCategories> candidateCategoriesList;
-    @OneToOne(cascade=CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private ProfileImage profileImage;
 
     @Override

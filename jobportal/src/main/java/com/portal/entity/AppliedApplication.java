@@ -1,5 +1,7 @@
 package com.portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,8 +25,10 @@ public class AppliedApplication
     private double expectedSalary;
     private String status= JobStatus.STATUS_REJECTED.toString();
     @ManyToOne
+    @JsonIgnore
     private Candidate candidate;
     @ManyToOne
+    @JsonIgnore
     private Jobs jobs;
 
 

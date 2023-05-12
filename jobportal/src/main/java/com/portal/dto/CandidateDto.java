@@ -1,6 +1,7 @@
 package com.portal.dto;
-import com.portal.entity.Category;
-import com.portal.entity.Location;
+
+
+import com.portal.entity.AppliedApplication;
 import com.portal.entity.ProfileImage;
 import com.portal.entity.Roles;
 import lombok.AllArgsConstructor;
@@ -14,14 +15,14 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CompanySignupDto
+public class CandidateDto
 {
     private String name;
     private String email;
     private String password;
-    private String description;
-    private ProfileImage profileImage;
-    private List<Location>locationList;
-    private List<Category>categoryList;
+    private long phoneNumber;
+    private ProfileImage image;
     private Roles roles;
+    private List<Long> applicationList;
+
 }
