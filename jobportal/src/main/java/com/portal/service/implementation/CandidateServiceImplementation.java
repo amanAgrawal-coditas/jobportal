@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CandidateServiceImplementation implements CandidateService
@@ -60,14 +61,14 @@ public class CandidateServiceImplementation implements CandidateService
     @Override
     public String updatePassword(PasswordDto passwordDto, long id) throws CandidateDoesNotExistsException {
         Candidate candidate=candidateRepository.findById(id).orElseThrow(()->new CandidateDoesNotExistsException(HttpStatus.BAD_REQUEST,"The candidate does not exists"));
-        boolean check= passwordEncoder.matches(passwordDto.getOldPassword(), candidate.getPassword());
+        boolean check= passwordEncoder.matches(passwordDto.getOldPassword(), candidate.getPassword())&&!Objects.equals(passwordDto.getOldPassword(), passwordDto.getNewPassword());
         if (check)
         {
             candidate.setPassword(passwordEncoder.encode(passwordDto.getNewPassword()));
             Candidate updatedCandidate=candidateRepository.save(candidate);
             return "password has been changed";
         }
-        else if (passwordDto.getOldPassword()==passwordDto.getNewPassword())
+        else if (Objects.equals(passwordDto.getOldPassword(), passwordDto.getNewPassword()))
         {
             return "the old password cannot match with the new one";
         }

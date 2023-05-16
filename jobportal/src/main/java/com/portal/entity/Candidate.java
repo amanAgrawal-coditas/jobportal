@@ -38,6 +38,7 @@ public class Candidate implements UserDetails
     private List<CandidateCategories> candidateCategoriesList;
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private ProfileImage profileImage;
+    private long otp;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

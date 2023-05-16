@@ -24,5 +24,6 @@ public class CandidateDto
     private ProfileImage image;
     private Roles roles;
     private List<Long> applicationList;
+    private long otp;
 
 }

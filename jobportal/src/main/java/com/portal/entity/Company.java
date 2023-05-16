@@ -1,5 +1,6 @@
 package com.portal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,7 @@ public class Company implements UserDetails {
     private String password;
     private String description;
     @OneToMany(mappedBy = "company",cascade=CascadeType.ALL)
+    @JsonIgnore
     private List<Location> locations;
     @OneToMany(mappedBy = "company", cascade =  CascadeType.ALL)
     private List<Jobs> jobsList;
@@ -35,9 +37,10 @@ public class Company implements UserDetails {
     private Roles role;
     @OneToOne(cascade=CascadeType.ALL)
     private ProfileImage profileImage;
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
-    private List<Category> categoryList;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
+    private List<CompanyCategory> categoryList;
+    private long otp;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority(role.getName()));

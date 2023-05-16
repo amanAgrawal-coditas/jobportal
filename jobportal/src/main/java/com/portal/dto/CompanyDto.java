@@ -1,8 +1,5 @@
 package com.portal.dto;
-import com.portal.entity.Category;
-import com.portal.entity.Location;
-import com.portal.entity.ProfileImage;
-import com.portal.entity.Roles;
+import com.portal.entity.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +18,9 @@ public class CompanyDto
     private String password;
     private String description;
     private ProfileImage profileImage;
-    private List<Location>locationList;
-    private List<Category>categoryList;
+    private List<String>locationList;
+    private List<String>categoryList;
     private Roles roles;
+    private List<Jobs> jobsList;
+    private long otp;
 }

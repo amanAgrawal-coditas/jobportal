@@ -23,7 +23,5 @@ public class Location
     @ManyToOne
     private Jobs jobs;
     private String locationName;
-    public Location(String locationName) {
-        this.locationName = locationName;
-    }
+
 }

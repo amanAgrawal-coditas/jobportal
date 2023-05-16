@@ -19,7 +19,7 @@ import java.util.List;
 public class CandidateController
 {
     @Autowired
-private CandidateService candidateService;
+    private CandidateService candidateService;
     @PutMapping(value = "/updateCandidate/{id}",consumes = MediaType.APPLICATION_JSON_VALUE)
     public String updateCandidate(@RequestBody CandidateDto candidateDto,@PathVariable long id) throws CandidateDoesNotExistsException
     {

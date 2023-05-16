@@ -24,6 +24,6 @@ public class Category
     private List<CandidateCategories> candidateCategoriesList;
     @OneToMany(mappedBy ="category")
     private List<Jobs> jobsList;
-    @ManyToOne(cascade=CascadeType.PERSIST)
-    private Company company;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "category")
+    private List<CompanyCategory> categoryList;
 }

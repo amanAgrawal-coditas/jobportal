@@ -1,9 +1,8 @@
 package com.portal.controller;
 
-import com.portal.dto.CandidateDto;
-import com.portal.dto.CompanyDto;
-import com.portal.dto.LoginDto;
+import com.portal.dto.*;
 import com.portal.exception.CandidateAlreadyExistsException;
+import com.portal.exception.CandidateDoesNotExistsException;
 import com.portal.exception.CompanyAlreadyExistsException;
 import com.portal.exception.CompanyDoesNotExistsException;
 import com.portal.security.JwtResponse;
@@ -17,10 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
 
@@ -62,4 +58,26 @@ public class AuthController {
         jwtResponse.setRole(userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()).get(0));
         return ResponseEntity.ok(jwtResponse);
     }
-}
+    @GetMapping("/forgotPassword")
+    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordDto forgotPasswordDto) throws CompanyDoesNotExistsException, CandidateDoesNotExistsException {
+        String response = authService.forgotPassword(forgotPasswordDto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+        @PostMapping("/verifyEmail")
+        Boolean verifyEmail (@RequestBody OtpVerifyDto otpVerifyDto)
+        {
+            boolean check = authService.verifyEmail(otpVerifyDto);
+            return check;
+        }
+        @PutMapping("/changePasswordTrue")
+        public ResponseEntity<String> changePasswordTrue (@RequestBody OtpVerifyDto otpVerifyDto)
+        {
+            String response = authService.changePasswordTrue(otpVerifyDto);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        @GetMapping("/changePasswordFalse")
+        public String changePasswordTrue ()
+        {
+            return authService.changePasswordFalse();
+        }
+    }

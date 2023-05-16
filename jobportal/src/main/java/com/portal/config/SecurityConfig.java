@@ -19,34 +19,35 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private CustomUserDetailService customUserDetailService;
+//    @Autowired
+//    private CustomUserDetailService customUserDetailService;
     @Autowired
     private UserDetailsService userDetailsService;
-
     @Autowired
     private JwtFilter jwtFilter;
 
     @Bean
-    public AuthenticationManager authenticationManager() throws Exception {
+    public AuthenticationManager authenticationManager() throws Exception
+    {
         return super.authenticationManager();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder()
+    {
         return new BCryptPasswordEncoder();
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception //authentication
     {
-        auth.userDetailsService(customUserDetailService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception //authorization
     {
-//        http.csrf().disable().authorizeRequests().antMatchers("/**").permitAll();
+//        http.csrf().disable().authorizeRequests().antMatchers("/**").permitAll(); when to permit all the applications
         http
                 .csrf()
                 .disable()
@@ -57,6 +58,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers("/api/**").hasAuthority("ROLE_CANDIDATE")
                 .antMatchers("/candidateController/**").hasAuthority("ROLE_CANDIDATE_ADMIN")
+                .antMatchers("/api/company/**").hasAuthority("ROLE_COMPANY")
+                .antMatchers("/companyAdmin").hasAuthority("ROLE_COMPANY_ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
