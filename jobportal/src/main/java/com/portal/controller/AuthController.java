@@ -58,11 +58,12 @@ public class AuthController {
         jwtResponse.setRole(userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()).get(0));
         return ResponseEntity.ok(jwtResponse);
     }
-    @GetMapping("/forgotPassword")
-    public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordDto forgotPasswordDto) throws CompanyDoesNotExistsException, CandidateDoesNotExistsException {
-        String response = authService.forgotPassword(forgotPasswordDto);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+        @PostMapping("/forgotPassword")
+        public ResponseEntity<Boolean> forgotPassword(@RequestBody ForgotPasswordDto forgotPasswordDto) throws CompanyDoesNotExistsException, CandidateDoesNotExistsException
+        {
+            Boolean response = authService.forgotPassword(forgotPasswordDto);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
         @PostMapping("/verifyEmail")
         Boolean verifyEmail (@RequestBody OtpVerifyDto otpVerifyDto)
         {
@@ -70,13 +71,13 @@ public class AuthController {
             return check;
         }
         @PutMapping("/changePasswordTrue")
-        public ResponseEntity<String> changePasswordTrue (@RequestBody OtpVerifyDto otpVerifyDto)
+        public ResponseEntity<Boolean> changePasswordTrue (@RequestBody OtpVerifyDto otpVerifyDto)
         {
-            String response = authService.changePasswordTrue(otpVerifyDto);
+            Boolean response = authService.changePasswordTrue(otpVerifyDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         @GetMapping("/changePasswordFalse")
-        public String changePasswordTrue ()
+        public String changePasswordFalse ()
         {
             return authService.changePasswordFalse();
         }

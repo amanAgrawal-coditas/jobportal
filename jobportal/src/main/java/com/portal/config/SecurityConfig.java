@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/**").hasAuthority("ROLE_CANDIDATE")
                 .antMatchers("/candidateController/**").hasAuthority("ROLE_CANDIDATE_ADMIN")
                 .antMatchers("/api/company/**").hasAuthority("ROLE_COMPANY")
-                .antMatchers("/companyAdmin").hasAuthority("ROLE_COMPANY_ADMIN")
+                .antMatchers("/companyAdmin/**").hasAuthority("ROLE_COMPANY_ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

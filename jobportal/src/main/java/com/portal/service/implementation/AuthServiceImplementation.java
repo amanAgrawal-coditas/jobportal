@@ -105,6 +105,7 @@ public class AuthServiceImplementation implements AuthService {
         company.setLocations(locationList1);
         company.setCategoryList(companyCategoryList);
         companyRepository.save(savedCompany);
+        emailService.sendEmail(companySignupDto.getEmail(),"Welcome to your company profile where you can hire right and required candidates for the purpose!","Welcome aboard!");
         return "Welcome to your company profile";
     }
 
@@ -127,29 +128,40 @@ public class AuthServiceImplementation implements AuthService {
         profileImage.setImageData(ImageUtil.compressImage(profileImage.getImageData()));
         candidate.setProfileImage(profileImage);
         candidateRepository.save(candidate);
+        emailService.sendEmail(candidateSignupDto.getEmail(),"Welcome to your own job portal where you can apply jobs and get good placements","You have been verified");
         return "Welcome to your candidate profile";
     }
 
     @Override
-//    @EventListener(ApplicationReadyEvent.class)
-    public String forgotPassword(ForgotPasswordDto forgotPasswordDto) throws CompanyDoesNotExistsException, CandidateDoesNotExistsException {
+    public Boolean forgotPassword(ForgotPasswordDto forgotPasswordDto) throws CompanyDoesNotExistsException, CandidateDoesNotExistsException
+    {
+        boolean isSent=false;
         if ((forgotPasswordDto.getEmail()) != null && companyRepository.findByEmail(forgotPasswordDto.getEmail()).isPresent()) {
             Company company = companyRepository.findByEmail(forgotPasswordDto.getEmail()).get();
-            emailService.sendEmail(company.getEmail(), "The Otp to reset your mail is" + company.getOtp(), "Password reset mail");
-            return "Otp sent to your mail";
+            long otp = Long.parseLong(new Random().ints(6, 0, 10).mapToObj(String::valueOf).collect(Collectors.joining()));
+            company.setOtp(otp);
+            Company updatedCompany=companyRepository.save(company);
+            emailService.sendEmail(company.getEmail(), "The Otp to reset your mail is " + otp, "Password reset mail");
+             isSent=true;
+            return isSent;
         } else if ((forgotPasswordDto.getEmail()) != null && candidateRepository.findByEmail(forgotPasswordDto.getEmail()).isPresent()) {
             Candidate candidate = candidateRepository.findByEmail(forgotPasswordDto.getEmail()).get();
-            emailService.sendEmail(candidate.getEmail(), "The Otp to reset your mail is" + candidate.getOtp(), "Password reset mail");
-            return "Otp sent your mail";
+            long otp = Long.parseLong(new Random().ints(6, 0, 10).mapToObj(String::valueOf).collect(Collectors.joining()));
+            candidate.setOtp(otp);
+            Candidate updatedCandidate=candidateRepository.save(candidate);
+            emailService.sendEmail(candidate.getEmail(), "The Otp to reset your mail is " + otp, "Password reset mail");
+            isSent=true;
+            return isSent;
         } else {
-            return "Email does not exists";
+            return isSent;
         }
 
     }
 
     @Override
     public Boolean verifyEmail(OtpVerifyDto otpVerifyDto) {
-        if (otpVerifyDto.getEmail() != null && companyRepository.findByEmail(otpVerifyDto.getEmail()).isPresent()) {
+        if (otpVerifyDto.getEmail() != null && companyRepository.findByEmail(otpVerifyDto.getEmail()).isPresent())
+        {
             Company company = companyRepository.findByEmail(otpVerifyDto.getEmail()).get();
             if (otpVerifyDto.getOtp() == company.getOtp()) {
                 return true;
@@ -169,22 +181,26 @@ public class AuthServiceImplementation implements AuthService {
     }
 
     @Override
-    public String changePasswordTrue(OtpVerifyDto otpVerifyDto)
+    public Boolean changePasswordTrue(OtpVerifyDto otpVerifyDto)
     {
         if (otpVerifyDto.getEmail() != null && companyRepository.findByEmail(otpVerifyDto.getEmail()).isPresent())
         {
             Company company = companyRepository.findByEmail(otpVerifyDto.getEmail()).get();
             company.setPassword(passwordEncoder.encode(otpVerifyDto.getPassword()));
-            return "your password has been changed";
+            Company updatedCompany=companyRepository.save(company);
+            emailService.sendEmail(otpVerifyDto.getEmail(), "Your password has been updated if it was not you please let us know ","Changed successfully");
+            return true;
         }
         else if (otpVerifyDto.getEmail() != null && candidateRepository.findByEmail(otpVerifyDto.getEmail()).isPresent())
         {
             Candidate candidate = candidateRepository.findByEmail(otpVerifyDto.getEmail()).get();
             candidate.setPassword(passwordEncoder.encode(otpVerifyDto.getPassword()));
-            return "your password has been changed";
+            Candidate updatedCandidate=candidateRepository.save(candidate);
+            emailService.sendEmail(otpVerifyDto.getEmail(), "Your password has been updated if it was not you please let us know ","Changed successfully");
+            return true;
         }
         else
-            return "check your email";
+            return false;
     }
     @Override
     public String changePasswordFalse()

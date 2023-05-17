@@ -11,8 +11,8 @@ public interface AuthService
     String login(LoginDto loginDto);
     String companySignUp(CompanyDto companySignupDto) throws CompanyAlreadyExistsException, CompanyDoesNotExistsException;
     String candidateSignUp(CandidateDto candidateSignupDto) throws CandidateAlreadyExistsException;
-    String forgotPassword(ForgotPasswordDto forgotPasswordDto) throws CompanyDoesNotExistsException, CandidateDoesNotExistsException;
+    Boolean forgotPassword(ForgotPasswordDto forgotPasswordDto) throws CompanyDoesNotExistsException, CandidateDoesNotExistsException;
     Boolean verifyEmail(OtpVerifyDto otpVerifyDto);
-    String changePasswordTrue(OtpVerifyDto otpVerifyDto);
+    Boolean changePasswordTrue(OtpVerifyDto otpVerifyDto);
     String changePasswordFalse();
 }
