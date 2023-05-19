@@ -19,8 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-//    @Autowired
-//    private CustomUserDetailService customUserDetailService;
     @Autowired
     private UserDetailsService userDetailsService;
     @Autowired
@@ -31,7 +29,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     {
         return super.authenticationManager();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder()
     {
@@ -47,7 +44,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception //authorization
     {
-//        http.csrf().disable().authorizeRequests().antMatchers("/**").permitAll(); when to permit all the applications
         http
                 .csrf()
                 .disable()

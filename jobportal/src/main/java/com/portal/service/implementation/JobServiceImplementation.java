@@ -7,6 +7,7 @@ import com.portal.entity.Jobs;
 import com.portal.entity.Location;
 import com.portal.exception.CategoryNotFoundException;
 import com.portal.exception.CompanyDoesNotExistsException;
+import com.portal.exception.JobNotFoundException;
 import com.portal.repository.CategoryRepository;
 import com.portal.repository.CompanyRepository;
 import com.portal.repository.JobRepository;
@@ -50,5 +51,18 @@ public class JobServiceImplementation implements JobService
         jobs.setSalary(jobDto.getSalary());
         jobRepository.save(jobs);
         return "Job posted!";
+    }
+
+    @Override
+    public String updateJob(JobDto jobDto, long companyId, long categoryId,long jobId) throws CompanyDoesNotExistsException, CategoryNotFoundException, JobNotFoundException {
+        Company company=companyRepository.findById(companyId).orElseThrow(()->new CompanyDoesNotExistsException(HttpStatus.BAD_REQUEST,"The company does not exists"));
+        Category category=categoryRepository.findById(categoryId).orElseThrow(()->new CategoryNotFoundException(HttpStatus.BAD_REQUEST,"This category does not exists in this company"));
+        Jobs jobs=jobRepository.findById(jobId).orElseThrow(()->new JobNotFoundException(HttpStatus.BAD_REQUEST,"The job does not exist"));
+        if (jobDto.getJobDescription()!=null&&jobs.getJobDescription()!= jobDto.getJobDescription())
+        {
+            jobs.setJobDescription(jobDto.getJobDescription());
+
+        }
+        return "Job has been updated";
     }
 }

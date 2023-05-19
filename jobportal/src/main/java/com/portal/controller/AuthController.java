@@ -5,6 +5,7 @@ import com.portal.exception.CandidateAlreadyExistsException;
 import com.portal.exception.CandidateDoesNotExistsException;
 import com.portal.exception.CompanyAlreadyExistsException;
 import com.portal.exception.CompanyDoesNotExistsException;
+import com.portal.response.OtpDto;
 import com.portal.security.JwtResponse;
 import com.portal.security.JwtUtil;
 import com.portal.service.AuthService;
@@ -59,16 +60,16 @@ public class AuthController {
         return ResponseEntity.ok(jwtResponse);
     }
         @PostMapping("/forgotPassword")
-        public ResponseEntity<Boolean> forgotPassword(@RequestBody ForgotPasswordDto forgotPasswordDto) throws CompanyDoesNotExistsException, CandidateDoesNotExistsException
+        public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordDto forgotPasswordDto) throws CompanyDoesNotExistsException, CandidateDoesNotExistsException
         {
-            Boolean response = authService.forgotPassword(forgotPasswordDto);
+            String response = authService.forgotPassword(forgotPasswordDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         @PostMapping("/verifyEmail")
-        Boolean verifyEmail (@RequestBody OtpVerifyDto otpVerifyDto)
+        OtpDto verifyEmail (@RequestBody OtpVerifyDto otpVerifyDto)
         {
-            boolean check = authService.verifyEmail(otpVerifyDto);
-            return check;
+
+            return authService.verifyEmail(otpVerifyDto);
         }
         @PutMapping("/changePasswordTrue")
         public ResponseEntity<Boolean> changePasswordTrue (@RequestBody OtpVerifyDto otpVerifyDto)

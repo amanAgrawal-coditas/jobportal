@@ -1,7 +1,6 @@
 package com.portal.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +39,8 @@ public class Candidate implements UserDetails
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private ProfileImage profileImage;
     private long otp;
+    private LocalTime currentTimeOtp;
+    boolean isOtpActive;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

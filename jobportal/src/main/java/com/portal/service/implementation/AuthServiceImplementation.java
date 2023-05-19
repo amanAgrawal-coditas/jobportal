@@ -7,17 +7,18 @@ import com.portal.exception.CandidateDoesNotExistsException;
 import com.portal.exception.CompanyAlreadyExistsException;
 import com.portal.exception.CompanyDoesNotExistsException;
 import com.portal.repository.*;
+import com.portal.response.OtpDto;
 import com.portal.service.AuthService;
-import com.portal.service.EmailService;
 import com.portal.service.EmailService;
 import com.portal.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import java.util.Optional;
@@ -105,13 +106,15 @@ public class AuthServiceImplementation implements AuthService {
         company.setLocations(locationList1);
         company.setCategoryList(companyCategoryList);
         companyRepository.save(savedCompany);
-        emailService.sendEmail(companySignupDto.getEmail(),"Welcome to your company profile where you can hire right and required candidates for the purpose!","Welcome aboard!");
+        emailService.sendEmail(companySignupDto.getEmail(), "Welcome to your company profile where you can hire right and required candidates for the purpose!", "Welcome aboard!");
         return "Welcome to your company profile";
     }
 
     @Override
-    public String candidateSignUp(CandidateDto candidateSignupDto) throws CandidateAlreadyExistsException {
-        if (candidateRepository.existsByEmail(candidateSignupDto.getEmail())) {
+    public String candidateSignUp(CandidateDto candidateSignupDto) throws CandidateAlreadyExistsException
+    {
+        if (candidateRepository.existsByEmail(candidateSignupDto.getEmail()))
+        {
             throw new CandidateAlreadyExistsException(HttpStatus.BAD_REQUEST, "Candidate's email already exists");
         }
         Candidate candidate = new Candidate();
@@ -128,83 +131,115 @@ public class AuthServiceImplementation implements AuthService {
         profileImage.setImageData(ImageUtil.compressImage(profileImage.getImageData()));
         candidate.setProfileImage(profileImage);
         candidateRepository.save(candidate);
-        emailService.sendEmail(candidateSignupDto.getEmail(),"Welcome to your own job portal where you can apply jobs and get good placements","You have been verified");
+        emailService.sendEmail(candidateSignupDto.getEmail(), "Welcome to your own job portal where you can apply jobs and get good placements", "You have been verified");
         return "Welcome to your candidate profile";
     }
 
     @Override
-    public Boolean forgotPassword(ForgotPasswordDto forgotPasswordDto) throws CompanyDoesNotExistsException, CandidateDoesNotExistsException
-    {
-        boolean isSent=false;
+    public String forgotPassword(ForgotPasswordDto forgotPasswordDto) throws CompanyDoesNotExistsException, CandidateDoesNotExistsException {
+        boolean isSent = false;
         if ((forgotPasswordDto.getEmail()) != null && companyRepository.findByEmail(forgotPasswordDto.getEmail()).isPresent()) {
             Company company = companyRepository.findByEmail(forgotPasswordDto.getEmail()).get();
             long otp = Long.parseLong(new Random().ints(6, 0, 10).mapToObj(String::valueOf).collect(Collectors.joining()));
             company.setOtp(otp);
-            Company updatedCompany=companyRepository.save(company);
             emailService.sendEmail(company.getEmail(), "The Otp to reset your mail is " + otp, "Password reset mail");
-             isSent=true;
-            return isSent;
+            LocalTime currentTime = LocalTime.now();
+            company.setCurrentTimeOtp(currentTime);
+            company.setOtpActive(true);
+            Company updatedCompany = companyRepository.save(company);
+            return "Otp sent to your email";
         } else if ((forgotPasswordDto.getEmail()) != null && candidateRepository.findByEmail(forgotPasswordDto.getEmail()).isPresent()) {
             Candidate candidate = candidateRepository.findByEmail(forgotPasswordDto.getEmail()).get();
             long otp = Long.parseLong(new Random().ints(6, 0, 10).mapToObj(String::valueOf).collect(Collectors.joining()));
             candidate.setOtp(otp);
-            Candidate updatedCandidate=candidateRepository.save(candidate);
+            LocalTime currentTime = LocalTime.now();
+            candidate.setCurrentTimeOtp(currentTime);
+            candidate.setOtpActive(true);
+            Candidate updatedCandidate = candidateRepository.save(candidate);
             emailService.sendEmail(candidate.getEmail(), "The Otp to reset your mail is " + otp, "Password reset mail");
-            isSent=true;
-            return isSent;
-        } else {
-            return isSent;
+            return "Otp sent to your email";
         }
 
+        return "Check your email";
     }
 
     @Override
-    public Boolean verifyEmail(OtpVerifyDto otpVerifyDto) {
-        if (otpVerifyDto.getEmail() != null && companyRepository.findByEmail(otpVerifyDto.getEmail()).isPresent())
-        {
+    public OtpDto verifyEmail(OtpVerifyDto otpVerifyDto) {
+        OtpDto otpDto = new OtpDto();
+        if (otpVerifyDto.getEmail() != null && companyRepository.findByEmail(otpVerifyDto.getEmail()).isPresent()) {
+
             Company company = companyRepository.findByEmail(otpVerifyDto.getEmail()).get();
-            if (otpVerifyDto.getOtp() == company.getOtp()) {
-                return true;
+            LocalTime receivedTime = company.getCurrentTimeOtp();
+            LocalTime currentTime = LocalTime.now();
+            if (currentTime.minusSeconds(50).isAfter(receivedTime)) {
+                company.setOtpActive(false);
             } else {
-                return false;
+                company.setOtpActive(true);
             }
+            Company updatedCompany = companyRepository.save(company);
+            if (otpVerifyDto.getOtp() == company.getOtp()) {
+                if (updatedCompany.isOtpActive() == true) {
+                    otpDto.setMessage("Otp successfully matched");
+                    otpDto.setStatus(true);
+                } else {
+                    otpDto.setMessage("Otp expired");
+                    otpDto.setStatus(false);
+                }
+            } else {
+                otpDto.setMessage("Incorrect Otp");
+                otpDto.setStatus(false);
+            }
+            return otpDto;
         } else if (otpVerifyDto.getEmail() != null && candidateRepository.findByEmail(otpVerifyDto.getEmail()).isPresent()) {
             Candidate candidate = candidateRepository.findByEmail(otpVerifyDto.getEmail()).get();
-            if (otpVerifyDto.getOtp() == candidate.getOtp()) {
-                return true;
+            LocalTime receivedTime = candidate.getCurrentTimeOtp();
+            LocalTime currentTime = LocalTime.now();
+            if (currentTime.minusSeconds(50).isAfter(receivedTime)) {
+                candidate.setOtpActive(false);
             } else {
-                return false;
+                candidate.setOtpActive(true);
             }
+            Candidate updatedCandidate = candidateRepository.save(candidate);
+            if (otpVerifyDto.getOtp() == candidate.getOtp()) {
+                if (updatedCandidate.isOtpActive() == true) {
+                    otpDto.setMessage("Otp successfully matched");
+                    otpDto.setStatus(true);
+                } else {
+                    otpDto.setMessage("Otp expired");
+                    otpDto.setStatus(false);
+                }
+            } else {
+                otpDto.setMessage("Incorrect Otp");
+                otpDto.setStatus(false);
+            }
+            return otpDto;
         } else {
-            return false;
+            otpDto.setMessage("Something went wrong please try again");
+            otpDto.setStatus(false);
+            return otpDto;
         }
     }
 
     @Override
-    public Boolean changePasswordTrue(OtpVerifyDto otpVerifyDto)
-    {
-        if (otpVerifyDto.getEmail() != null && companyRepository.findByEmail(otpVerifyDto.getEmail()).isPresent())
-        {
+    public Boolean changePasswordTrue(OtpVerifyDto otpVerifyDto) {
+        if (otpVerifyDto.getEmail() != null && companyRepository.findByEmail(otpVerifyDto.getEmail()).isPresent()) {
             Company company = companyRepository.findByEmail(otpVerifyDto.getEmail()).get();
             company.setPassword(passwordEncoder.encode(otpVerifyDto.getPassword()));
-            Company updatedCompany=companyRepository.save(company);
-            emailService.sendEmail(otpVerifyDto.getEmail(), "Your password has been updated if it was not you please let us know ","Changed successfully");
+            Company updatedCompany = companyRepository.save(company);
+            emailService.sendEmail(otpVerifyDto.getEmail(), "Your password has been updated if it was not you please let us know ", "Changed successfully");
             return true;
-        }
-        else if (otpVerifyDto.getEmail() != null && candidateRepository.findByEmail(otpVerifyDto.getEmail()).isPresent())
-        {
+        } else if (otpVerifyDto.getEmail() != null && candidateRepository.findByEmail(otpVerifyDto.getEmail()).isPresent()) {
             Candidate candidate = candidateRepository.findByEmail(otpVerifyDto.getEmail()).get();
             candidate.setPassword(passwordEncoder.encode(otpVerifyDto.getPassword()));
-            Candidate updatedCandidate=candidateRepository.save(candidate);
-            emailService.sendEmail(otpVerifyDto.getEmail(), "Your password has been updated if it was not you please let us know ","Changed successfully");
+            Candidate updatedCandidate = candidateRepository.save(candidate);
+            emailService.sendEmail(otpVerifyDto.getEmail(), "Your password has been updated if it was not you please let us know ", "Changed successfully");
             return true;
-        }
-        else
+        } else
             return false;
     }
+
     @Override
-    public String changePasswordFalse()
-    {
+    public String changePasswordFalse() {
         return "Otp does not match";
     }
 }

@@ -1,7 +1,6 @@
 package com.portal.dto;
 
 
-import com.portal.entity.AppliedApplication;
 import com.portal.entity.ProfileImage;
 import com.portal.entity.Roles;
 import lombok.AllArgsConstructor;

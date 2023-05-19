@@ -10,6 +10,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +43,8 @@ public class Company implements UserDetails {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
     private List<CompanyCategory> categoryList;
     private long otp;
+    private LocalTime currentTimeOtp;
+    boolean isOtpActive;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority(role.getName()));

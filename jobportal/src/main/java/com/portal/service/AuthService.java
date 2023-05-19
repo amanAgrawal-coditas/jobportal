@@ -5,14 +5,15 @@ import com.portal.exception.CandidateAlreadyExistsException;
 import com.portal.exception.CandidateDoesNotExistsException;
 import com.portal.exception.CompanyAlreadyExistsException;
 import com.portal.exception.CompanyDoesNotExistsException;
+import com.portal.response.OtpDto;
 
 public interface AuthService
 {
     String login(LoginDto loginDto);
     String companySignUp(CompanyDto companySignupDto) throws CompanyAlreadyExistsException, CompanyDoesNotExistsException;
     String candidateSignUp(CandidateDto candidateSignupDto) throws CandidateAlreadyExistsException;
-    Boolean forgotPassword(ForgotPasswordDto forgotPasswordDto) throws CompanyDoesNotExistsException, CandidateDoesNotExistsException;
-    Boolean verifyEmail(OtpVerifyDto otpVerifyDto);
+    String forgotPassword(ForgotPasswordDto forgotPasswordDto) throws CompanyDoesNotExistsException, CandidateDoesNotExistsException;
+    OtpDto verifyEmail(OtpVerifyDto otpVerifyDto);
     Boolean changePasswordTrue(OtpVerifyDto otpVerifyDto);
     String changePasswordFalse();
 }
