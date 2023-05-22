@@ -9,4 +9,5 @@ public interface JobService
 {
  String addJob(JobDto jobDto, long companyId,long categoryId) throws CompanyDoesNotExistsException, CategoryNotFoundException;
  String updateJob(JobDto jobDto, long companyId,long categoryId,long jobId) throws CompanyDoesNotExistsException, CategoryNotFoundException, JobNotFoundException;
+ String deleteJob(long jobId,long companyId) throws JobNotFoundException;
 }

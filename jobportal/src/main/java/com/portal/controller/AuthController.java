@@ -60,9 +60,9 @@ public class AuthController {
         return ResponseEntity.ok(jwtResponse);
     }
         @PostMapping("/forgotPassword")
-        public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordDto forgotPasswordDto) throws CompanyDoesNotExistsException, CandidateDoesNotExistsException
+        public ResponseEntity<Boolean> forgotPassword(@RequestBody ForgotPasswordDto forgotPasswordDto) throws CompanyDoesNotExistsException, CandidateDoesNotExistsException
         {
-            String response = authService.forgotPassword(forgotPasswordDto);
+            boolean response = authService.forgotPassword(forgotPasswordDto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         @PostMapping("/verifyEmail")
@@ -82,4 +82,5 @@ public class AuthController {
         {
             return authService.changePasswordFalse();
         }
+
     }

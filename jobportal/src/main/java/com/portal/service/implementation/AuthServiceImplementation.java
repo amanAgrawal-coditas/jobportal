@@ -136,7 +136,7 @@ public class AuthServiceImplementation implements AuthService {
     }
 
     @Override
-    public String forgotPassword(ForgotPasswordDto forgotPasswordDto) throws CompanyDoesNotExistsException, CandidateDoesNotExistsException {
+    public boolean forgotPassword(ForgotPasswordDto forgotPasswordDto) throws CompanyDoesNotExistsException, CandidateDoesNotExistsException {
         boolean isSent = false;
         if ((forgotPasswordDto.getEmail()) != null && companyRepository.findByEmail(forgotPasswordDto.getEmail()).isPresent()) {
             Company company = companyRepository.findByEmail(forgotPasswordDto.getEmail()).get();
@@ -147,7 +147,7 @@ public class AuthServiceImplementation implements AuthService {
             company.setCurrentTimeOtp(currentTime);
             company.setOtpActive(true);
             Company updatedCompany = companyRepository.save(company);
-            return "Otp sent to your email";
+            return true;
         } else if ((forgotPasswordDto.getEmail()) != null && candidateRepository.findByEmail(forgotPasswordDto.getEmail()).isPresent()) {
             Candidate candidate = candidateRepository.findByEmail(forgotPasswordDto.getEmail()).get();
             long otp = Long.parseLong(new Random().ints(6, 0, 10).mapToObj(String::valueOf).collect(Collectors.joining()));
@@ -157,10 +157,10 @@ public class AuthServiceImplementation implements AuthService {
             candidate.setOtpActive(true);
             Candidate updatedCandidate = candidateRepository.save(candidate);
             emailService.sendEmail(candidate.getEmail(), "The Otp to reset your mail is " + otp, "Password reset mail");
-            return "Otp sent to your email";
+            return true;
         }
 
-        return "Check your email";
+        return false;
     }
 
     @Override
