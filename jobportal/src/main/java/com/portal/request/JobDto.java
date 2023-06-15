@@ -1,6 +1,7 @@
-package com.portal.dto;
+package com.portal.request;
 
 import com.portal.entity.Category;
+import com.portal.response.CategoryResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,5 +20,5 @@ public class JobDto
     private double salary;
     private List<Long> addNewLocations;
     private List<Long> removeLocations;
-    private Category category;
+    private CategoryResponse category;
 }

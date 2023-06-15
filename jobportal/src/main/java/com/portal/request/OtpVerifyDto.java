@@ -1,4 +1,4 @@
-package com.portal.dto;
+package com.portal.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginDto
+public class OtpVerifyDto
 {
     private String email;
+    private long otp;
     private String password;
 }

@@ -1,28 +1,24 @@
-package com.portal.dto;
-
+package com.portal.response;
 
 import com.portal.entity.ProfileImage;
-import com.portal.entity.Roles;
+import com.portal.request.ProfileImageDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
-
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class CandidateDto
+@AllArgsConstructor
+public class CompanyResponse
 {
     private String name;
     private String email;
     private String password;
-    private long phoneNumber;
-    private ProfileImage image;
-    private Roles roles;
-    private List<Long> applicationList;
-    private long otp;
-
+    private String description;
+    private ProfileImageDto profileImage;
+    private List<String> locationList;
+    private List<String>categoryList;
 }

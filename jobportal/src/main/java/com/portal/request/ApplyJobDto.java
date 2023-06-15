@@ -1,4 +1,4 @@
-package com.portal.dto;
+package com.portal.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OtpVerifyDto
+public class ApplyJobDto
 {
+    private String name;
     private String email;
-    private long otp;
-    private String password;
+    private String description;
+    private double expectedSalary;
+    private String status;
 }

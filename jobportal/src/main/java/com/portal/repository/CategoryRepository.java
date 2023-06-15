@@ -7,5 +7,5 @@ import javax.swing.text.html.Option;
 import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category,Long> {
-    Optional<Category> findByCategoryName(String s1);
+    Optional<Category>findByCategoryName(String s1);
 }

@@ -1,19 +1,28 @@
 package com.portal.service.implementation;
 
-import com.portal.dto.CompanyDto;
-import com.portal.dto.PasswordDto;
-import com.portal.entity.Company;
+import com.portal.entity.*;
+import com.portal.repository.AppliedApplicationRepository;
+import com.portal.repository.CandidateRepository;
+import com.portal.repository.JobRepository;
+import com.portal.request.CompanyDto;
+import com.portal.request.PasswordDto;
 import com.portal.exception.CompanyDoesNotExistsException;
 import com.portal.repository.CompanyRepository;
+import com.portal.response.AppliedApplicationResponse;
+import com.portal.response.CandidateResponse;
+import com.portal.response.CompanyResponse;
 import com.portal.service.CompanyService;
+import com.portal.service.EmailService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyServiceImplementation implements CompanyService
@@ -24,11 +33,19 @@ public class CompanyServiceImplementation implements CompanyService
     private PasswordEncoder passwordEncoder;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private JobRepository jobRepository;
+    @Autowired
+    private CandidateRepository candidateRepository;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private AppliedApplicationRepository appliedApplicationRepository;
 
     @Override
-    public List<Company> getAllCompanies()
+    public List<CompanyResponse> getAllCompanies()
     {
-        return companyRepository.findAll();
+        return companyRepository.findAll().stream().map((element) -> modelMapper.map(element, CompanyResponse.class)).collect(Collectors.toList());
     }
 
     @Override
@@ -46,13 +63,10 @@ public class CompanyServiceImplementation implements CompanyService
         {
             company.setEmail(companyDto.getEmail());
         }
-        if (company.getLocations()!=null &&company.getJobsList()!=companyDto.getJobsList())
+        if (company.getProfileImage()!=null&& !Objects.equals(company.getProfileImage(),companyDto.getImage()))
         {
-            company.setJobsList(companyDto.getJobsList());
-        }
-        if (company.getProfileImage()!=null&&company.getProfileImage()!=companyDto.getProfileImage())
-        {
-            company.setProfileImage(companyDto.getProfileImage());
+            ProfileImage image=modelMapper.map(company.getProfileImage(), ProfileImage.class);
+            company.setProfileImage(image);
         }
         Company updatedCompany=companyRepository.save(company);
         return "Details have been updated";
@@ -84,5 +98,43 @@ public class CompanyServiceImplementation implements CompanyService
             return "Entered password is incorrect";
             }
         }
+    }
+
+    @Override
+    public CompanyResponse getCompanyById(long id)
+    {
+        Company company= companyRepository.findById(id).get();
+        return modelMapper.map(company, CompanyResponse.class);
+    }
+    @Override
+    public List<AppliedApplicationResponse>getCandidatesByJob(long jobId)
+    {
+        Jobs jobs=jobRepository.findById(jobId).get();
+        List<AppliedApplication> appliedApplication=jobs.getApplicationList();
+        return appliedApplication.stream().map((element) -> modelMapper.map(element, AppliedApplicationResponse.class)).collect(Collectors.toList());
+    }
+
+    @Override
+    public String candidateAccepted(long jobId,long candidateId)
+    {
+        Jobs jobs=jobRepository.findById(jobId).get();
+        Candidate candidate=candidateRepository.findById(candidateId).get();
+        AppliedApplication appliedApplication=candidate.getApplicationList().stream().filter(appliedApplicationList -> appliedApplicationList.getJobs().getJobId() == jobId).collect(Collectors.toList()).get(0);
+        appliedApplication.setStatus(JobStatus.STATUS_ACCEPTED.toString());
+        appliedApplicationRepository.save(appliedApplication);
+        emailService.sendEmail(candidate.getEmail(),"Accepted","Your interview has been scheduled. Hr will connect you with the same");
+        return "Accepted";
+    }
+
+    @Override
+    public String candidateRejected(long jobId,long candidateId)
+    {
+        Jobs jobs=jobRepository.findById(jobId).get();
+        Candidate candidate=candidateRepository.findById(candidateId).get();
+        AppliedApplication appliedApplication=candidate.getApplicationList().stream().filter(appliedApplicationList -> appliedApplicationList.getJobs().getJobId() == jobId).collect(Collectors.toList()).get(0);
+        appliedApplication.setStatus(JobStatus.STATUS_REJECTED.toString());
+        appliedApplicationRepository.save(appliedApplication);
+        emailService.sendEmail(candidate.getEmail(),"Rejected","Your application has not been moved forward");
+        return "Rejected";
     }
 }

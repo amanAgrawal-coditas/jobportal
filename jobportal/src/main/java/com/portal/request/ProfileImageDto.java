@@ -1,7 +1,6 @@
-package com.portal.dto;
+package com.portal.request;
 
 public class ProfileImageDto
 {
-  private long imageId;
   private byte[] image;
 }

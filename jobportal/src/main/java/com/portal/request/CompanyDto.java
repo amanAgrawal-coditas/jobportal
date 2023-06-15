@@ -1,4 +1,4 @@
-package com.portal.dto;
+package com.portal.request;
 import com.portal.entity.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,10 +17,7 @@ public class CompanyDto
     private String email;
     private String password;
     private String description;
-    private ProfileImage profileImage;
-    private List<String>locationList;
-    private List<String>categoryList;
-    private Roles roles;
-    private List<Jobs> jobsList;
-    private long otp;
+    private byte[] image;
+    private List<Long>locationList;
+    private List<Long>categoryList;
 }

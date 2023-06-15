@@ -1,10 +1,14 @@
 package com.portal.service.implementation;
 
-import com.portal.dto.CandidateDto;
-import com.portal.dto.PasswordDto;
+import com.portal.entity.ProfileImage;
+import com.portal.request.CandidateDto;
+import com.portal.request.PasswordDto;
+import com.portal.request.ProfileImageDto;
+import com.portal.response.CandidateResponse;
 import com.portal.entity.Candidate;
 import com.portal.exception.CandidateDoesNotExistsException;
 import com.portal.repository.CandidateRepository;
+import com.portal.response.Response;
 import com.portal.service.CandidateService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class CandidateServiceImplementation implements CandidateService
@@ -25,8 +30,15 @@ public class CandidateServiceImplementation implements CandidateService
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Override
-    public List<Candidate> getAllCandidates() {
-        return candidateRepository.findAll();
+    public List<CandidateResponse> getAllCandidates() {
+        return candidateRepository.findAll().stream().map(candidate -> {
+            CandidateResponse candidateResponse = new CandidateResponse();
+            candidateResponse.setCandidateId(candidate.getCandidateId());
+            candidateResponse.setEmail(candidate.getEmail());
+            candidateResponse.setName(candidate.getName());
+            candidateResponse.setPhoneNumber(candidate.getPhoneNumber());
+            return candidateResponse;
+        }).collect(Collectors.toList());
     }
     @Override
     public String updateCandidate(CandidateDto candidateDto, long candidateId) throws CandidateDoesNotExistsException {
@@ -43,9 +55,10 @@ public class CandidateServiceImplementation implements CandidateService
         {
             candidate.setPhoneNumber(candidateDto.getPhoneNumber());
         }
-        if (candidateDto.getImage()!=null&&candidate.getProfileImage()!=candidateDto.getImage())
+        if (candidateDto.getImage()!=null&& !Objects.equals(candidate.getProfileImage(), candidateDto.getImage()))
         {
-            candidate.setProfileImage(candidateDto.getImage());
+            ProfileImage image=modelMapper.map(candidateDto.getImage(), ProfileImage.class);
+            candidate.setProfileImage(image);
         }
         Candidate updatedCandidate=candidateRepository.save(candidate);
          modelMapper.map(updatedCandidate,CandidateDto.class);
@@ -75,5 +88,16 @@ public class CandidateServiceImplementation implements CandidateService
         else{
             return "Entered password is incorrect";
         }
+    }
+
+    @Override
+    public Response getCandidate(String email) throws CandidateDoesNotExistsException {
+        Response response=new Response();
+        Candidate candidate=candidateRepository.findByEmail(email).orElseThrow(()->new CandidateDoesNotExistsException(HttpStatus.BAD_REQUEST,"The candidate does not exists"));
+        response.setEmail(candidate.getEmail());
+        response.setImage(candidate.getProfileImage().getImageData());
+        response.setName(candidate.getName());
+        response.setPhoneNumber(candidate.getPhoneNumber());
+        return response;
     }
 }

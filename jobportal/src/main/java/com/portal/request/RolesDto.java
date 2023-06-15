@@ -1,4 +1,4 @@
-package com.portal.dto;
+package com.portal.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ForgotPasswordDto
+public class RolesDto
 {
-    private String email;
-
+    private String roleName;
 }

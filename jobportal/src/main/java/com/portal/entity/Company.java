@@ -39,9 +39,8 @@ public class Company implements UserDetails {
     private Roles role;
     @OneToOne(cascade=CascadeType.ALL)
     private ProfileImage profileImage;
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "company")
-    private List<CompanyCategory> categoryList;
+    private List<CompanyCategory> companyCategoryList;
     private long otp;
     private LocalTime currentTimeOtp;
     boolean isOtpActive;

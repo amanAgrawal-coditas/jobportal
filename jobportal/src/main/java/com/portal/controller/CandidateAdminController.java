@@ -1,7 +1,7 @@
 package com.portal.controller;
 
-import com.portal.dto.CandidateDto;
-import com.portal.entity.Candidate;
+import com.portal.request.CandidateDto;
+import com.portal.response.CandidateResponse;
 import com.portal.exception.CandidateDoesNotExistsException;
 import com.portal.service.CandidateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +16,14 @@ public class CandidateAdminController
     @Autowired
     private CandidateService candidateService;
     @GetMapping("/allCandidates")
-    public List<Candidate> getAllCandidates(CandidateDto candidateDto)
+    public List<CandidateResponse> getAllCandidates(CandidateDto candidateDto)
     {
         return candidateService.getAllCandidates();
     }
     @DeleteMapping("/deleteCandidate/{candidateId}")
     String deleteCandidate(@PathVariable long candidateId) throws CandidateDoesNotExistsException
     {
-        System.out.println(candidateId);
+
         return candidateService.deleteCandid(candidateId);
     }
 }
